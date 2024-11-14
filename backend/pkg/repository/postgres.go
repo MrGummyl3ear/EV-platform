@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"backend/pkg/model"
 	"fmt"
 	"time"
 
@@ -38,17 +39,16 @@ func NewPostgresDB(cfg Config) (*gorm.DB, error) {
 	sqlDB.SetMaxIdleConns(10)
 	sqlDB.SetMaxOpenConns(100)
 	sqlDB.SetConnMaxLifetime(time.Hour)
+	err = db.AutoMigrate(&model.User{})
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.AutoMigrate(&model.Role{})
+	if err != nil {
+		return nil, err
+	}
 	/*
-		err = db.AutoMigrate(&model.User{})
-		if err != nil {
-			log.Println(err)
-		}
-
-		err = db.AutoMigrate(&model.Role{})
-		if err != nil {
-			log.Println(err)
-		}
-
 		err = db.AutoMigrate(&model.Banner{})
 		if err != nil {
 			log.Println(err)
