@@ -24,8 +24,8 @@ func (h *Handler) InitRoutes(ginMode string) *gin.Engine {
 	{
 		auth.POST("/sign-up", h.signUp)
 		auth.POST("/sign-in", h.signIn)
-		auth.GET("/google/login", h.googleLoginHandler)
-		auth.GET("/google/callback", h.googleCallbackHandler)
+		auth.GET("/:provider/login", h.signInWithProvider)
+		auth.GET("/:provider/callback", h.callbackHandler)
 	}
 
 	myPage := router.Group("/home")
