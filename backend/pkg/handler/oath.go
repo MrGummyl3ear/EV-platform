@@ -55,11 +55,12 @@ func (h *Handler) callbackHandler(c *gin.Context) {
 	q.Add("provider", provider)
 	c.Request.URL.RawQuery = q.Encode()
 
-	_, err := gothic.CompleteUserAuth(c.Writer, c.Request)
+	user, err := gothic.CompleteUserAuth(c.Writer, c.Request)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+	fmt.Printf("%v\n", user)
 
 	c.Redirect(http.StatusTemporaryRedirect, "/")
 }
