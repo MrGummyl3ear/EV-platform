@@ -6,15 +6,15 @@ import (
 	"gorm.io/gorm"
 )
 
-type AuthPostgres struct {
+type AuthDB struct {
 	db *gorm.DB
 }
 
-func NewAuthPostgres(db *gorm.DB) *AuthPostgres {
-	return &AuthPostgres{db: db}
+func NewAuthDB(db *gorm.DB) *AuthDB {
+	return &AuthDB{db: db}
 }
 
-func (r *AuthPostgres) CreateUser(user model.User, role string) (int, error) {
+func (r *AuthDB) CreateUser(user model.User, role string) (int, error) {
 	var err error
 	var userRole model.Role
 
@@ -37,7 +37,7 @@ func (r *AuthPostgres) CreateUser(user model.User, role string) (int, error) {
 	return user.Id, tx.Commit().Error
 }
 
-func (r *AuthPostgres) GetUser(username, password string) ([]string, error) {
+func (r *AuthDB) GetUser(username, password string) ([]string, error) {
 	var user model.User
 	var roles []model.Role
 	tx := r.db.Begin()

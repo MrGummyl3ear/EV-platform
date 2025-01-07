@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"gorm.io/driver/postgres"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
@@ -18,15 +18,13 @@ type Config struct {
 	SSLMode  string
 }
 
-func NewPostgresDB(cfg Config) (*gorm.DB, error) {
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-		cfg.Host,
-		cfg.Port,
+func NewMySQLDB(cfg Config) (*gorm.DB, error) {
+	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		cfg.Username,
 		cfg.Password,
-		cfg.DBName,
-		cfg.SSLMode)
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		cfg.Host,
+		cfg.DBName)
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
@@ -48,11 +46,16 @@ func NewPostgresDB(cfg Config) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	/*
-		err = db.AutoMigrate(&model.Banner{})
-		if err != nil {
-			log.Println(err)
-		}
-	*/
+
+	err = db.AutoMigrate(&model.Post{})
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.AutoMigrate(&model.Comment{})
+	if err != nil {
+		return nil, err
+	}
+
 	return db, nil
 }

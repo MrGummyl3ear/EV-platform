@@ -36,7 +36,7 @@ func (h *Handler) userIdentity(c *gin.Context) {
 		return
 	}
 
-	permissions, err := h.services.Authorization.ParseToken(headerParts[1])
+	username, permissions, err := h.services.Authorization.ParseToken(headerParts[1])
 	if err != nil {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
@@ -45,6 +45,7 @@ func (h *Handler) userIdentity(c *gin.Context) {
 	for _, permission := range permissions {
 		if Access[permission] >= userRole {
 			c.Set("access", permission)
+			c.Set("username", username)
 			return
 		}
 	}

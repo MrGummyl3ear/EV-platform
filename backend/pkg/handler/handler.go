@@ -2,6 +2,7 @@ package handler
 
 import (
 	"backend/pkg/service"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,11 +15,11 @@ func NewHandler(services *service.Service) *Handler {
 	return &Handler{services: services}
 }
 
-//Have to use Gin mode somehow
-
 func (h *Handler) InitRoutes(ginMode string) *gin.Engine {
 	gin.SetMode(ginMode)
 	router := gin.New()
+
+	router.Static("/static", os.Getenv("STATIC_DIR"))
 
 	auth := router.Group("/auth")
 	{
@@ -31,6 +32,21 @@ func (h *Handler) InitRoutes(ginMode string) *gin.Engine {
 	myPage := router.Group("/home")
 	{
 		myPage.GET("/:username", h.userIdentity)
+	}
+
+	payPage := router.Group("/payment")
+	{
+		payPage.GET("/config", h.handleConfig)
+		payPage.POST("/create-payment-intent", h.createPayment)
+		payPage.POST("/webhook", h.handleWebhook)
+	}
+
+	chatPage := router.Group("/posts", h.userIdentity)
+	{
+		chatPage.POST("/create", h.createPost)
+		chatPage.GET("/", h.getAllPosts)
+		chatPage.POST("/:id/create", h.createComment)
+		chatPage.GET("/:id", h.GetAllComments)
 	}
 
 	return router
