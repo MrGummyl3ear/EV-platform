@@ -41,6 +41,7 @@ func (h *Handler) createPayment(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, "invalid body")
 		return
 	}
+
 	params := &stripe.PaymentIntentParams{
 		Amount:   stripe.Int64(int64(input.Cost)),
 		Currency: stripe.String("GBP"),

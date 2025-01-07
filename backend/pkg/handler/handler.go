@@ -3,7 +3,9 @@ package handler
 import (
 	"backend/pkg/service"
 	"os"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,6 +20,15 @@ func NewHandler(services *service.Service) *Handler {
 func (h *Handler) InitRoutes(ginMode string) *gin.Engine {
 	gin.SetMode(ginMode)
 	router := gin.New()
+
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://example.com", "http://localhost:3000"}, // Adjust to your frontend domains
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	router.Static("/static", os.Getenv("STATIC_DIR"))
 
