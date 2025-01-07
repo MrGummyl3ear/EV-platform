@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded',async() =>{
         headers:{
             "Content-Type":"application/json"
         },
+        body: JSON.stringify({
+            cost: 5000, // Example: 50.00 GBP
+        }),
     }).then(r => r.json())
 
     const elements = stripe.elements({clientSecret})

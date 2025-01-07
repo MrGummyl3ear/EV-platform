@@ -2,7 +2,6 @@ package handler
 
 import (
 	"backend/pkg/model"
-	"bytes"
 	"io"
 	"net/http"
 	"os"
@@ -37,22 +36,11 @@ func (h *Handler) handleConfig(c *gin.Context) {
 }
 
 func (h *Handler) createPayment(c *gin.Context) {
-	body, err := io.ReadAll(c.Request.Body)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "failed to read request body"})
-		return
-	}
-	c.Request.Body = io.NopCloser(bytes.NewBuffer(body)) // Re-assign body to allow BindJSON to read it later
-
-	// Log the body for debugging
-	//fmt.Println("Received JSON:", string(body))
-
 	var input model.Transaction
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, string(body))
+		newErrorResponse(c, http.StatusBadRequest, "invalid body")
 		return
 	}
-
 	params := &stripe.PaymentIntentParams{
 		Amount:   stripe.Int64(int64(input.Cost)),
 		Currency: stripe.String("GBP"),
