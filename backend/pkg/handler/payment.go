@@ -35,6 +35,18 @@ func (h *Handler) handleConfig(c *gin.Context) {
 	})
 }
 
+/*
+func (h *Handler) createPayment(c *gin.Context) {
+	var jsonData map[string]interface{}
+	if err := c.ShouldBindJSON(&jsonData); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	// Process the JSON payload
+	c.JSON(200, gin.H{"message": "JSON received", "data": jsonData})
+}
+*/
+
 func (h *Handler) createPayment(c *gin.Context) {
 	var input model.Transaction
 	if err := c.BindJSON(&input); err != nil {

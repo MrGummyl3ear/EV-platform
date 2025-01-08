@@ -22,7 +22,7 @@ func (h *Handler) InitRoutes(ginMode string) *gin.Engine {
 	router := gin.New()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://example.com", "http://localhost:3000"}, // Adjust to your frontend domains
+		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:8000"}, // Adjust to your frontend domains
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -31,6 +31,17 @@ func (h *Handler) InitRoutes(ginMode string) *gin.Engine {
 	}))
 
 	router.Static("/static", os.Getenv("STATIC_DIR"))
+
+	router.POST("/static", func(c *gin.Context) {
+		var jsonData map[string]interface{}
+		if err := c.ShouldBindJSON(&jsonData); err != nil {
+			c.JSON(400, gin.H{"error": "Invalid JSON"})
+			return
+		}
+		// Process the JSON payload
+		c.Set("cost", jsonData["cost"])
+		c.JSON(200, gin.H{"message": "JSON received", "data": jsonData})
+	})
 
 	auth := router.Group("/auth")
 	{

@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded',async() =>{
+    console.log("DOM fully loaded");
     const {publishableKey} = await fetch("/payment/config").then((r) => r.json());
     const stripe = Stripe(publishableKey);
 
@@ -8,7 +9,7 @@ document.addEventListener('DOMContentLoaded',async() =>{
             "Content-Type":"application/json"
         },
         body: JSON.stringify({
-            cost: 5000, // Example: 50.00 GBP
+            cost : 5000,
         }),
     }).then(r => r.json())
 
