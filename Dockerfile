@@ -7,6 +7,8 @@ RUN apk add --no-cache git
 # Set the working directory inside the container
 WORKDIR /app
 
+COPY client ./client
+
 # Copy only the module files first (to cache dependencies)
 COPY backend/go.mod backend/go.sum ./backend/
 WORKDIR /app/backend
